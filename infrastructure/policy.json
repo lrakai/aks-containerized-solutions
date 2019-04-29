@@ -166,7 +166,7 @@
                 "Basic"
             ]
         },
-        "allowsMasters": {
+        "allowedMasters": {
             "value": [
                 1
             ]
