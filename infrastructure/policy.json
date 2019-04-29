@@ -20,7 +20,13 @@
                 "Microsoft.ContainerService/managedClusters/agentPools/write",
                 "Microsoft.OperationalInsights/workspaces/write",
                 "Microsoft.OperationsManagement/solutions/write",
-                "Microsoft.Network/virtualNetworks/write"
+                "Microsoft.Network/virtualNetworks/write",
+                "Microsoft.Compute/virtualMachines/write",
+                "Microsoft.Compute/virtualMachines/redeploy/action",
+                "Microsoft.Compute/virtualMachines/generalize/action",
+                "Microsoft.Compute/virtualMachines/capture/action",
+                "Microsoft.Compute/virtualMachines/extensions/write",
+                "Microsoft.Compute/availabilitySets/write"
             ]
         }
     ],
@@ -154,10 +160,16 @@
                 "Microsoft.ContainerRegistry/registries",
                 "Microsoft.ContainerService/containerServices", 
                 "Microsoft.ContainerService/managedClusters",
+                "Microsoft.ContainerService/managedClusters/agentPools",
                 "Microsoft.OperationalInsights/workspaces",
                 "Microsoft.OperationsManagement/solutions",
                 "Microsoft.Network/virtualNetworks",
                 "Microsoft.Network/virtualNetworks/subnets",
+                "Microsoft.Network/networkSecurityGroups",
+                "Microsoft.Network/networkInterfaces",
+                "Microsoft.Compute/virtualMachines",
+                "Microsoft.Compute/virtualMachines/extensions",
+                "Microsoft.Compute/availabilitySets",
                 "Microsoft.Authorization/roleAssignments"
             ]
         },
