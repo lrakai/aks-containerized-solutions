@@ -162,12 +162,30 @@
             "metadata": {
                 "description": "A CIDR notation IP for Docker bridge."
             }
+        },
+        "cloudShellStorageAccount": {
+            "type": "string",
+            "defaultValue": "cacloudshell"
+        },
+        "cloudShellStorageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS"
         }
     },
     "variables": {
-        "workspaceName": "[concat(parameters('workspaceName'),'-',uniqueString(resourceGroup().id))]"
+        "workspaceName": "[concat(parameters('workspaceName'),'-',uniqueString(resourceGroup().id))]",
+        "cloudShellStorageAccountName": "[toLower(replace(concat(parameters('cloudShellStorageAccount'), resourceGroup().name),'-', ''))]"
     },
     "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('cloudShellStorageAccountName')]",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "accountType": "[parameters('cloudShellStorageAccountType')]"
+            }
+        },
         {
             "apiVersion": "2019-04-01",
             "dependsOn": [

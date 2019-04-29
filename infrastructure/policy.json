@@ -26,7 +26,11 @@
                 "Microsoft.Compute/virtualMachines/generalize/action",
                 "Microsoft.Compute/virtualMachines/capture/action",
                 "Microsoft.Compute/virtualMachines/extensions/write",
-                "Microsoft.Compute/availabilitySets/write"
+                "Microsoft.Compute/availabilitySets/write",
+                "Microsoft.Storage/storageAccounts/queueServices/write",
+                "Microsoft.Storage/storageAccounts/blobServices/containers/write",
+                "Microsoft.Storage/storageAccounts/write",
+                "Microsoft.Storage/storageAccounts/fileServices/fileShare/write"
             ]
         }
     ],
@@ -170,7 +174,8 @@
                 "Microsoft.Compute/virtualMachines",
                 "Microsoft.Compute/virtualMachines/extensions",
                 "Microsoft.Compute/availabilitySets",
-                "Microsoft.Authorization/roleAssignments"
+                "Microsoft.Authorization/roleAssignments",
+                "Microsoft.Storage/storageAccounts"
             ]
         },
         "allowedRegistrySkus": {
