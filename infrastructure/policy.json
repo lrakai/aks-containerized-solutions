@@ -1,0 +1,187 @@
+{
+    "permissions": [
+        {
+            "actions": [
+                "*"
+            ],
+            "notActions": [
+                "Microsoft.Authorization/*/Delete",
+                "Microsoft.Authorization/*/Write",
+                "Microsoft.Authorization/elevateAccess/Action",
+                "Microsoft.MarketplaceOrdering/*",
+                "Microsoft.ContainerService/register/action",
+                "Microsoft.ContainerService/unregister/action",
+                "Microsoft.ContainerService/containerServices/delete",
+                "Microsoft.ContainerService/containerServices/write",
+                "Microsoft.ContainerService/managedClusters/write",
+                "Microsoft.ContainerService/managedClusters/delete",
+                "Microsoft.ContainerService/managedClusters/resetServicePrincipalProfile/action",
+                "Microsoft.ContainerService/managedClusters/resetAADProfile/action",
+                "Microsoft.ContainerService/managedClusters/agentPools/write",
+                "Microsoft.OperationalInsights/workspaces/write",
+                "Microsoft.OperationsManagement/solutions/write",
+                "Microsoft.Network/virtualNetworks/write"
+            ]
+        }
+    ],
+    "parameters": {
+        "allowedLocations": {
+            "type": "array",
+            "metadata": {
+                "description": "The list of locations that can be specified when deploying resources",
+                "strongType": "location",
+                "displayName": "Allowed locations"
+            }
+        },
+        "allowedServices": {
+            "type": "array",
+            "metadata": {
+                "description": "The list of Resource Types that are allowed.",
+                "strongType": "type",
+                "displayName": "Allowed resources"
+            }
+        },
+        "allowedRegistrySkus": {
+            "type": "array",
+            "metadata": {
+                "description": "The list of allowed Registry SKUs",
+                "displayName": "Allowed Registry SKUs"
+            }
+        },
+        "allowedMasters": {
+            "type": "array",
+            "metadata": {
+                "description": "The number of allowed masters",
+                "displayName": "Allowed Masters"
+            }
+        },
+        "allowedRoleAssignmentRoleDefinitionIds": {
+            "type": "array",
+            "metadata": {
+                "description": "The allowed role definition IDs",
+                "displayName": "Allowed Role Assignment Role Definition IDs"
+            }
+        },
+        "disallowedActions": {
+            "type": "array",
+            "metadata": {
+                "description": "The list of actions that are not allowed in the resource group",
+                "displayName": "Disallowed actions"
+            }
+        }
+    },
+    "displayName": "Allowed locations, and services",
+    "description": "This policy restrict the allowed locations, actions, registry SKUs, number of masters, allowedRoleAssignmentRoleDefinitionIds, and services.",
+    "policyRule": {
+        "if": {
+            "anyOf": [
+                {
+                    "not": {
+                        "field": "type",
+                        "in": "[parameters('allowedServices')]"
+                    }
+                },
+                {
+                    "not": {
+                        "field": "location",
+                        "in": "[parameters('allowedLocations')]"
+                    }
+                },
+                {
+                    "allOf": [
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.ContainerRegistry/registries/sku.name"
+                        },
+                        {
+                            "not": {
+                                "field": "Microsoft.ContainerRegistry/registries/sku.name",
+                                "in": "[parameters('allowedRegistrySkus')]"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.ContainerService/containerServices/masterProfile.count"
+                        },
+                        {
+                            "not": {
+                                "field": "Microsoft.ContainerService/containerServices/masterProfile.count",
+                                "in": "[parameters('allowedMasters')]"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.Authorization/roleAssignments/roleDefinitionId"
+                        },
+                        {
+                            "not": {
+                                "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                                "in": "[parameters('allowedRoleAssignmentRoleDefinitionIds')]"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "source": "action",
+                    "in": "[parameters('disallowedActions')]"
+                }
+            ]
+        },
+        "then": {
+            "effect": "deny"
+        }
+    },
+    "parameters_values": {
+        "allowedLocations": {
+            "value": [
+                "{RGLocation}",
+                "WestUS",
+                "WestUS2",
+                "SouthCentralUS",
+                "CentralUS"
+            ]
+        },
+        "allowedServices": {
+            "value": [
+                "Microsoft.ContainerRegistry/registries",
+                "Microsoft.ContainerService/containerServices", 
+                "Microsoft.ContainerService/managedClusters",
+                "Microsoft.OperationalInsights/workspaces",
+                "Microsoft.OperationsManagement/solutions",
+                "Microsoft.Network/virtualNetworks",
+                "Microsoft.Network/virtualNetworks/subnets",
+                "Microsoft.Authorization/roleAssignments"
+            ]
+        },
+        "allowedRegistrySkus": {
+            "value": [
+                "Basic"
+            ]
+        },
+        "allowsMasters": {
+            "value": [
+                1
+            ]
+        },
+        "allowedRoleAssignmentRoleDefinitionIds": {
+            "value": [
+                "4d97b98b-1d4f-4787-a291-c67834d212e7",
+                "3913510d-42f4-4e42-8a64-420c390055eb"
+            ]
+        },
+        "disallowedActions": {
+            "value": [
+                "Microsoft.ContainerService/openShiftManagedClusters/write",
+                "Microsoft.ContainerService/openShiftClusters/write"
+            ]
+        }
+    }
+}
