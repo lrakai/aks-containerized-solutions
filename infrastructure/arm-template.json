@@ -25,7 +25,7 @@
         },
         "osDiskSizeGB": {
             "type": "int",
-            "defaultValue": 20,
+            "defaultValue": 30,
             "metadata": {
                 "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
             },
@@ -58,7 +58,7 @@
             "metadata": {
                 "description": "The Service Principal Client Secret."
             },
-            "type": "string"
+            "type": "securestring"
         },
         "osType": {
             "type": "string",
@@ -137,7 +137,7 @@
             }
         },
         "principalId": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The objectId of service principal."
             }
@@ -164,11 +164,14 @@
             }
         }
     },
+    "variables": {
+        "workspaceName": "[concat(parameters('workspaceName'),'-',uniqueString(resourceGroup().id))]"
+    },
     "resources": [
         {
             "apiVersion": "2019-04-01",
             "dependsOn": [
-                "[parameters('workspaceName')]",
+                "[variables('workspaceName')]",
                 "Microsoft.Network/virtualNetworks/aks-vnet",
                 "[concat('Microsoft.Resources/deployments/', 'ClusterSubnetRoleAssignmentDeployment-20190428134121')]"
             ],
@@ -207,7 +210,7 @@
                     "omsagent": {
                         "enabled": "[parameters('enableOmsAgent')]",
                         "config": {
-                            "logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces',parameters('workspaceName'))]"
+                            "logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces',variables('workspaceName'))]"
                         }
                     }
                 }
@@ -220,8 +223,8 @@
             "type": "Microsoft.Resources/deployments",
             "name": "SolutionDeployment-20190428134121",
             "apiVersion": "2017-05-10",
-            "resourceGroup": "[split(resourceId('Microsoft.OperationalInsights/workspaces',parameters('workspaceName')),'/')[4]]",
-            "subscriptionId": "[split(resourceId('Microsoft.OperationalInsights/workspaces',parameters('workspaceName')),'/')[2]]",
+            "resourceGroup": "[split(resourceId('Microsoft.OperationalInsights/workspaces',variables('workspaceName')),'/')[4]]",
+            "subscriptionId": "[split(resourceId('Microsoft.OperationalInsights/workspaces',variables('workspaceName')),'/')[2]]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -234,12 +237,12 @@
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
                             "location": "[parameters('workspaceRegion')]",
-                            "name": "[concat('ContainerInsights', '(', split(resourceId('Microsoft.OperationalInsights/workspaces',parameters('workspaceName')),'/')[8], ')')]",
+                            "name": "[concat('ContainerInsights', '(', split(resourceId('Microsoft.OperationalInsights/workspaces',variables('workspaceName')),'/')[8], ')')]",
                             "properties": {
-                                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces',parameters('workspaceName'))]"
+                                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces',variables('workspaceName'))]"
                             },
                             "plan": {
-                                "name": "[concat('ContainerInsights', '(', split(resourceId('Microsoft.OperationalInsights/workspaces',parameters('workspaceName')),'/')[8], ')')]",
+                                "name": "[concat('ContainerInsights', '(', split(resourceId('Microsoft.OperationalInsights/workspaces',variables('workspaceName')),'/')[8], ')')]",
                                 "product": "[concat('OMSGallery/', 'ContainerInsights')]",
                                 "promotionCode": "",
                                 "publisher": "Microsoft"
@@ -249,12 +252,12 @@
                 }
             },
             "dependsOn": [
-                "[parameters('workspaceName')]"
+                "[variables('workspaceName')]"
             ]
         },
         {
             "type": "Microsoft.OperationalInsights/workspaces",
-            "name": "[parameters('workspaceName')]",
+            "name": "[variables('workspaceName')]",
             "apiVersion": "2015-11-01-preview",
             "location": "[parameters('location')]",
             "properties": {
@@ -265,12 +268,12 @@
                     "searchVersion": 1
                 }
             }
-          },
+        },
         {
             "type": "Microsoft.Resources/deployments",
             "name": "ClusterMonitoringMetricPulisherRoleAssignmentDepl-20190428134121",
             "apiVersion": "2017-05-10",
-            "resourceGroup": "[resourceGroup().id]",
+            "resourceGroup": "[resourceGroup().name]",
             "subscriptionId": "[subscription().subscriptionId]",
             "properties": {
                 "mode": "Incremental",
@@ -283,18 +286,18 @@
                         {
                             "type": "Microsoft.ContainerService/managedClusters/providers/roleAssignments",
                             "apiVersion": "2018-01-01-preview",
-                            "name": "ca-labs-cluster/Microsoft.Authorization/4727cacb-5a3b-4948-a91f-8bce2f2bade9",
+                            "name": "[concat('ca-labs-cluster/Microsoft.Authorization/',guid(resourceGroup().id,'monitoring-metrics-publisher'))]",
                             "properties": {
                                 "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '3913510d-42f4-4e42-8a64-420c390055eb')]",
                                 "principalId": "[parameters('principalId')]",
-                                "scope": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().id, '/providers/Microsoft.ContainerService/managedClusters/ca-labs-cluster')]"
+                                "scope": "[concat(resourceGroup().id, '/providers/Microsoft.ContainerService/managedClusters/ca-labs-cluster')]"
                             }
                         }
                     ]
                 }
             },
             "dependsOn": [
-                "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().id, 'providers/Microsoft.ContainerService/managedClusters/ca-labs-cluster')]"
+                "[parameters('resourceName')]"
             ]
         },
         {
@@ -306,10 +309,7 @@
                 "subnets": [
                     {
                         "name": "default",
-                        "dependsOn": [
-                            "aks-vnet"
-                          ],
-                          "properties": {
+                        "properties": {
                             "addressPrefix": "10.240.0.0/16"
                         }
                     }
@@ -326,7 +326,7 @@
             "type": "Microsoft.Resources/deployments",
             "name": "ClusterSubnetRoleAssignmentDeployment-20190428134121",
             "apiVersion": "2017-05-10",
-            "resourceGroup": "[resourceGroup().id]",
+            "resourceGroup": "[resourceGroup().name]",
             "subscriptionId": "[subscription().subscriptionId]",
             "properties": {
                 "mode": "Incremental",
@@ -337,13 +337,13 @@
                     "variables": {},
                     "resources": [
                         {
-                            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+                            "type": "Microsoft.Network/virtualNetworks/providers/roleAssignments",
                             "apiVersion": "2017-05-01",
-                            "name": "aks-vnet/default/Microsoft.Authorization/dfd7d3cc-aa28-4119-b1a9-a4936ebbeb32",
+                            "name": "[concat('aks-vnet/Microsoft.Authorization/',guid(resourceGroup().id,'network-contributor'))]",
                             "properties": {
                                 "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
                                 "principalId": "[parameters('principalId')]",
-                                "scope": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().id, 'providers/Microsoft.Network/virtualNetworks/aks-vnet/subnets/default')]"
+                                "scope": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/aks-vnet')]"
                             }
                         }
                     ]
