@@ -101,7 +101,7 @@
                     "allOf": [
                         {
                             "field": "type",
-                            "equals": "Microsoft.ContainerRegistry/registries/sku.name"
+                            "equals": "Microsoft.ContainerRegistry/registries"
                         },
                         {
                             "not": {
@@ -115,7 +115,7 @@
                     "allOf": [
                         {
                             "field": "type",
-                            "equals": "Microsoft.ContainerService/containerServices/masterProfile.count"
+                            "equals": "Microsoft.ContainerService/containerServices"
                         },
                         {
                             "not": {
@@ -129,7 +129,7 @@
                     "allOf": [
                         {
                             "field": "type",
-                            "equals": "Microsoft.Authorization/roleAssignments/roleDefinitionId"
+                            "equals": "Microsoft.Authorization/roleAssignments"
                         },
                         {
                             "not": {
