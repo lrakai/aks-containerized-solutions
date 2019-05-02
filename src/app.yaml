@@ -10,7 +10,7 @@ spec:
     spec:
       replicas: 2
       containers:
-      - image: $acr_registry/app/tetris:1.0 # image in ACR
+      - image: {{acr_name}}/app/tetris:1.0 # image in ACR
         name: tetris
         # include resources for better scheduling
         resources:
@@ -47,7 +47,7 @@ metadata:
     kubernetes.io/ingress.class: addon-http-application-routing
 spec:
   rules:
-  - host: tetris.$dns_zone
+  - host: tetris.{{dns_zone}}
     http:
       paths:
       # Access internal service via ingress
