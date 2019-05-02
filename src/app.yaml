@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: tetris
 spec:
+  replicas: 2
   template:
     metadata:
       labels:
         app: tetris
     spec:
-      replicas: 2
       containers:
       - image: {{acr_name}}/app/tetris:1.0 # image in ACR
         name: tetris
