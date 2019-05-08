@@ -1,0 +1,28 @@
+{
+    "Name": "AKS Labs Service Principal",
+    "Id": "bfed7770-658a-4b03-a4b8-357182350f8f",
+    "IsCustom": true,
+    "Description": "Operations Required for AKS Labs.",
+    "Actions": [
+      "Microsoft.Storage/*/read",
+      "Microsoft.Network/*/read",
+      "Microsoft.Compute/*/read",
+      "Microsoft.Compute/virtualMachines/start/action",
+      "Microsoft.Compute/virtualMachines/restart/action",
+      "Microsoft.Authorization/*/read",
+      "Microsoft.ResourceHealth/availabilityStatuses/read",
+      "Microsoft.Resources/subscriptions/resourceGroups/read",
+      "Microsoft.ContainerRegistry/registries/pull/read",
+      "Microsoft.ContainerRegistry/*/read/",
+      "Microsoft.Network/networkInterfaces/write",
+      "Microsoft.Network/virtualNetworks/subnets/join/action"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+      "/subscriptions/{subscriptionId1}",
+      "/subscriptions/{subscriptionId2}",
+      "/subscriptions/{subscriptionId3}"
+    ]
+  }
