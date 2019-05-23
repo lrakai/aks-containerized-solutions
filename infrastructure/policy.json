@@ -29,8 +29,7 @@
                 "Microsoft.Compute/availabilitySets/write",
                 "Microsoft.Storage/storageAccounts/queueServices/write",
                 "Microsoft.Storage/storageAccounts/blobServices/containers/write",
-                "Microsoft.Storage/storageAccounts/write",
-                "Microsoft.Storage/storageAccounts/fileServices/fileShare/write"
+                "Microsoft.Storage/storageAccounts/write"
             ]
         }
     ],
